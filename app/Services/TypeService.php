@@ -26,7 +26,7 @@ class TypeService
             }
             return response()->json([
                 'success' => true,
-                'data' => new TypeCollection($types->paginate(2)),
+                'data' => new TypeCollection($types->paginate(10)),
             ]);
         } catch (\Exception $e) {
             debug(['type'], [$e]);

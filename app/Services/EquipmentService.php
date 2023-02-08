@@ -180,7 +180,7 @@ class EquipmentService
             }
             return response()->json([
                 'success' => true,
-                'data' => new EquipmentCollection($types->paginate(40)),
+                'data' => new EquipmentCollection($types->orderBy('updated_at', 'DESC')->paginate(40)),
             ]);
         } catch (Exception $e) {
             debug(['equipment'], [$e]);
