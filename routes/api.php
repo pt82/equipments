@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 Route::post('/login', [AuthController::class, 'login'])->name('login.custom');
+Route::post('/reg', [AuthController::class, 'reg']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

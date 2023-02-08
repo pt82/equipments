@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Equipment;
 use App\Requests\EquipmentRequest;
 use App\Services\EquipmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class EquipmentController extends Controller
 {
@@ -71,11 +69,11 @@ class EquipmentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  EquipmentRequest  $request
+     * @param  Request  $request
      * @param  int  $id
      * @return JsonResponse
      */
-    public function update(EquipmentRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $service = new EquipmentService();
         return $service->handle($request, $id);

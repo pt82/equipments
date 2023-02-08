@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Requests\UserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -18,8 +21,8 @@ class AuthController extends Controller
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
-            return redirect('/home');
-//            return $this->sendResponse($success, 'User login successfully.');
+//            return redirect('/home');
+            return $this->sendResponse($success, 'User login successfully.');
 
         }
 
@@ -28,6 +31,13 @@ class AuthController extends Controller
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
 
         }
-
+    }
+    public function reg(UserRequest $request)
+    {
+        return User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
     }
 }

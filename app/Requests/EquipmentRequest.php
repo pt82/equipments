@@ -16,15 +16,8 @@ class EquipmentRequest extends ApiRequest
             ];
         }
         return [
-            'serial' => 'required|string|unique:equipments,serial'
+            'serial' => 'required|string|unique:equipments,serial',
+            'type_id' => 'required|integer'
         ];
     }
-
-//    public function messages()
-//    {
-//            return [
-//                'equipments.*.serial.required' => 'Serial is required',
-//                'equipments.*.serial.unique' => 'Serial is not unique'
-//            ];
-//    }
 }

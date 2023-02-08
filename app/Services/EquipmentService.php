@@ -8,6 +8,7 @@ use App\Http\Resources\EquipmentCollection;
 use App\Http\Resources\EquipmentResource;
 use App\Models\Equipment;
 use App\Models\Type;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use function Psy\debug;
@@ -20,14 +21,14 @@ class EquipmentService
 
     /** @var integer */
     private $id;
+
     /** @var array */
-    private $error = [];
+    private $errors = [];
 
 
     /**
      * @param Request
      * @param integer
-     * @param boolean
      *
      * @return JsonResponse
      */
@@ -39,7 +40,7 @@ class EquipmentService
         return response()->json([
             'success' => true,
             'data' => $this->data,
-            'errors' => $this->error
+            'errors' => $this->errors,
         ]);
     }
 
@@ -73,16 +74,18 @@ class EquipmentService
             }
             $equipment->serial = $item['serial'];
             $equipment->type_id = $item['type_id'];
-            if($this->validatedSerial($item['serial'], $item['type_id'])) {
+            if ($this->validatedSerial($item['serial'], $item['type_id'])) {
                 $equipment->save();
-            } else $this->error[] = [
-                'message' => 'Неверная маска',
-                'equipment' => $equipment
-            ];
+            } else {
+                $this->errors[] = [
+                    'message' => 'Неверная маска',
+                    'equipment' => $equipment,
+                ];
+            }
 
             return new EquipmentResource($equipment);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             debug(['equipment'], [$e]);
         }
     }
@@ -102,18 +105,28 @@ class EquipmentService
             $smallA = '[a-z]';
             $x = '[a-z][][0-9]';
             $z = '[-,_,@]';
-            $str= '';
+            $pattern = '';
             foreach ($mask as $el) {
-                if($el === 'N') $str .= $n;
-                if($el === 'A') $str .= $bigA;
-                if($el === 'a') $str .= $smallA;
-                if($el === 'X') $str .= $x;
-                if($el === 'Z') $str .= $z;
+                if ($el === 'N') {
+                    $pattern .= $n;
+                }
+                if ($el === 'A') {
+                    $pattern .= $bigA;
+                }
+                if ($el === 'a') {
+                    $pattern .= $smallA;
+                }
+                if ($el === 'X') {
+                    $pattern .= $x;
+                }
+                if ($el === 'Z') {
+                    $pattern .= $z;
+                }
             }
             if (count($mask) !== strlen($serial)) {
                 return false;
             } else {
-                return ((preg_match("/$str/", $serial)) === 1 ? true : false);
+                return ((preg_match("/$pattern/", $serial)) === 1 ? true : false);
             }
         }
     }
@@ -129,7 +142,7 @@ class EquipmentService
             if ($id) {
                 return response()->json(['success' => (boolean)Equipment::destroy($id)]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             debug(['equipment'], [$e]);
         }
     }
@@ -148,7 +161,7 @@ class EquipmentService
                     'data' => new EquipmentResource($equipment),
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             debug(['equipment'], [$e]);
         }
     }
@@ -167,10 +180,10 @@ class EquipmentService
             }
             return response()->json([
                 'success' => true,
-                'data' => new EquipmentCollection($types->paginate(2)),
+                'data' => new EquipmentCollection($types->paginate(40)),
             ]);
-        } catch (\Exception $e) {
-            debug(['type'], [$e]);
+        } catch (Exception $e) {
+            debug(['equipment'], [$e]);
         }
     }
 }
