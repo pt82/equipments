@@ -18,18 +18,19 @@ class EquipmentController extends Controller
     public function index(Request $request)
     {
         $service = new EquipmentService();
-        return $service->listEquipment($request);
+        $result = $service->listEquipment($request);
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'data' => $result['data'],
+            ]);
+        } else {
+            return response()->json([
+                'errors' => 'Errors Equipments'
+            ], 422);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -40,7 +41,18 @@ class EquipmentController extends Controller
     public function store(EquipmentRequest $request)
     {
         $service = new EquipmentService();
-        return $service->handle($request);
+        $result = $service->handle($request);
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'data' => $result['data'],
+                'errors' => $result['errors']
+            ]);
+        } else {
+            return response()->json([
+                'errors' => 'Errors Equipments'
+            ], 422);
+        }
     }
 
     /**
@@ -52,19 +64,19 @@ class EquipmentController extends Controller
     public function show($id)
     {
         $service = new EquipmentService();
-        return $service->show($id);
+        $result =  $service->show($id);
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'data' => $result['data'],
+            ]);
+        } else {
+            return response()->json([
+                'errors' => 'Errors Equipments'
+            ], 422);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -76,7 +88,18 @@ class EquipmentController extends Controller
     public function update(Request $request, $id)
     {
         $service = new EquipmentService();
-        return $service->handle($request, $id);
+        $result = $service->handle($request, $id);
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'data' => $result['data'],
+                'errors' => $result['errors']
+            ]);
+        } else {
+            return response()->json([
+                'errors' => 'Errors Equipments'
+            ], 422);
+        }
     }
 
     /**
@@ -88,6 +111,15 @@ class EquipmentController extends Controller
     public function destroy($id)
     {
         $service = new EquipmentService();
-        return $service->delete($id);
+        $result = $service->delete($id);
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+            ]);
+        } else {
+            return response()->json([
+                'errors' => 'Errors Equipments'
+            ], 422);
+        }
     }
 }

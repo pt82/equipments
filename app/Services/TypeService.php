@@ -13,7 +13,7 @@ use function Psy\debug;
 class TypeService
 {
     /**
-     * @return JsonResponse
+     * @return array
      * @var Request $request
      */
     public function listType(Request $request)
@@ -24,10 +24,10 @@ class TypeService
             } else {
                 $types = Type::query();
             }
-            return response()->json([
+            return [
                 'success' => true,
                 'data' => new TypeCollection($types->paginate(10)),
-            ]);
+            ];
         } catch (\Exception $e) {
             debug(['type'], [$e]);
         }

@@ -30,18 +30,18 @@ class EquipmentService
      * @param Request
      * @param integer
      *
-     * @return JsonResponse
+     * @return array
      */
     public function handle(Request $request, $id = null)
     {
         $this->id = $id;
         $this->loadData($request);
 
-        return response()->json([
+        return [
             'success' => true,
             'data' => $this->data,
             'errors' => $this->errors,
-        ]);
+        ];
     }
 
     /**
@@ -134,13 +134,13 @@ class EquipmentService
 
     /**
      * @param integer
-     * @return JsonResponse
+     * @return array
      */
     public function delete($id)
     {
         try {
             if ($id) {
-                return response()->json(['success' => (boolean)Equipment::destroy($id)]);
+                return ['success' => (boolean)Equipment::destroy($id)];
             }
         } catch (Exception $e) {
             debug(['equipment'], [$e]);
@@ -149,17 +149,17 @@ class EquipmentService
 
     /**
      * @param integer
-     * @return JsonResponse
+     * @return array
      */
     public function show($id)
     {
         try {
             if ($id) {
                 $equipment = Equipment::query()->find($id);
-                return response()->json([
+                return [
                     'success' => true,
                     'data' => new EquipmentResource($equipment),
-                ]);
+                ];
             }
         } catch (Exception $e) {
             debug(['equipment'], [$e]);
@@ -167,21 +167,21 @@ class EquipmentService
     }
 
     /**
-     * @return JsonResponse
+     * @return array
      * @var Request $request
      */
     public function listEquipment(Request $request)
     {
         try {
             if ($request->filled('search')) {
-                $types = Equipment::search($request->search);
+                $equipments = Equipment::search($request->search);
             } else {
-                $types = Equipment::query();
+                $equipments = Equipment::query();
             }
-            return response()->json([
+            return [
                 'success' => true,
-                'data' => new EquipmentCollection($types->orderBy('updated_at', 'DESC')->paginate(40)),
-            ]);
+                'data' => new EquipmentCollection($equipments->orderBy('updated_at', 'DESC')->paginate(40)),
+            ];
         } catch (Exception $e) {
             debug(['equipment'], [$e]);
         }

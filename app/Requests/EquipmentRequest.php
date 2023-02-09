@@ -20,4 +20,11 @@ class EquipmentRequest extends ApiRequest
             'type_id' => 'required|integer'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'serial.unique' => 'Серийный номер уже существует'
+        ];
+    }
 }

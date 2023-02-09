@@ -18,6 +18,16 @@ class TypeController extends Controller
     public function index(Request $request)
     {
         $service = new TypeService();
-        return $service->listType($request);
+        $result = $service->listType($request);
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'data' => $result['data'],
+            ]);
+        } else {
+            return response()->json([
+                'errors' => 'Errors Types'
+            ], 422);
+        }
     }
 }
