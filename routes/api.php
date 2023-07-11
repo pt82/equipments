@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\SwController;
 use App\Http\Controllers\API\TypeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\API\EquipmentController;
@@ -28,3 +29,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('equipment', EquipmentController::class);
     Route::get('equipment-type', [TypeController::class, 'index']);
 });
+
+Route::get('/gi', [SwController::class, 'index']);
+

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -15,7 +16,7 @@ class Controller extends BaseController
     /**
      * success response method.
      *
-     * @return Response
+     * @return JsonResponse
      */
 
     public function sendResponse($result, $message)
@@ -24,8 +25,9 @@ class Controller extends BaseController
         $response = [
 
             'success' => true,
-            'data'    => $result,
             'message' => $message,
+            'data'    => $result,
+
 
         ];
 
@@ -36,7 +38,7 @@ class Controller extends BaseController
     /**
      * return error response.
      *
-     * @return Response
+     * @return JsonResponse
      */
 
     public function sendError($error, $errorMessages = [], $code = 404)
