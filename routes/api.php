@@ -31,4 +31,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 Route::get('/gi', [SwController::class, 'index']);
+Route::get('/list-chars', [SwController::class, 'listChars']);
+Route::post('/update-chars', [SwController::class, 'updateChars']);
+Route::get('/gi-members', [SwController::class, 'listMembers']);
 

@@ -66,6 +66,14 @@ class ApiSwgohHelp
         }
     }
 
+    public function fetchChars() {
+        try {
+            return $this->fetchAPI('characters/');
+        } catch(Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * @param $response
      * @return mixed
@@ -74,7 +82,7 @@ class ApiSwgohHelp
     public function getResponseBody($response)
     {
         try {
-            return json_decode($response->getBody(), true)['data'];
+            return json_decode($response->getBody(), true);
         } catch(Exception $e) {
             throw $e;
         }
