@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Char;
 use App\Services\Chars\CharsService;
 use App\Services\Client\ApiSwgohHelp;
-use App\Services\Member\Members;
+use App\Services\Member\MembersService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -54,8 +54,8 @@ class SwController extends Controller
 
     public function listMembers()
     {
-        $servise = new Members();
-        return $this->sendResponse($servise->loadModels(), "Members");
+        $servise = new MembersService();
+        return $this->sendResponse($servise->loadModels(), "MembersService");
     }
 
     public function updateChars()
@@ -75,5 +75,13 @@ class SwController extends Controller
         $service = new CharsService();
 
         return $this->sendResponse($service->getListChars(), "ListChars");
+    }
+
+    public function updateMembers()
+    {
+        $service = new CharsService();
+
+        $service->updateListCharsFromSW($service->getCharsFromSW());
+
     }
 }
