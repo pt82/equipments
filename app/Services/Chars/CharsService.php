@@ -5,6 +5,7 @@ namespace App\Services\Chars;
 
 
 use App\Models\Char;
+use App\Models\Member;
 use App\Services\Client\ApiSwgohHelp;
 use Exception;
 
@@ -26,22 +27,35 @@ class CharsService
         }
     }
 
+    public function getShipsFromSW()
+    {
+        try {
+            $client = new ApiSwgohHelp();
+            $response = $client->fetchShips();
+
+            return $client->getResponseBody($response);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * @param $data
      * @throws Exception
      */
-    public function updateListCharsFromSW($data)
+    public function updateListCharsFromSW($data, $type)
     {
         try {
             foreach ($data as $char) {
                 $model = Char::query()->where('external_id', $char['base_id'])->first();
                 if (!$model) {
                     $model = new Char();
-                    $model->name = $char['name'];
-                    $model->external_id =  $char['base_id'];
-                    $model->url = $char['url'];
-                    $model->save();
                 }
+                $model->name = $char['name'];
+                $model->external_id = $char['base_id'];
+                $model->url = $char['url'];
+                $model->type = $type;
+                $model->save();
             }
         } catch (Exception $e) {
             throw $e;
@@ -56,6 +70,53 @@ class CharsService
     {
         try {
             return Char::query()->get();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $data
+     * @return array
+     * @throws Exception
+     */
+    public function searchChars($data)
+    {
+        try {
+            $result = [];
+            $rel = $data['rel'] ?? "";
+            $ids = $data['ids'];
+             $membersIds =  Member::query()
+                 ->when(!empty($rel), function ($query) use ($data)  {
+                     return $query->whereHas('chars', function ($query) use ($data) {
+                         $query->whereIn('char_id', $data['ids']);
+                         $query->where('rel', '>', $data['rel']);
+                     });
+                 })
+                 ->when(empty($rel), function ($query)  use ($ids) {
+                     return $query->whereHas('chars', function ($query) use ($ids) {
+                         $query->whereIn('char_id', $ids);
+                     });
+                 })
+                ->get();
+            foreach ($membersIds as $member)
+            {
+                if (!empty($rel))
+                {
+                    $chars = $member->chars()->whereIn('char_id', $data['ids'])->where('rel', '>' , $data['rel'])->get();
+                }
+                if (empty($rel))
+                {
+                    $chars = $member->chars()->whereIn('char_id', $data['ids'])->get();
+                }
+                $result[] = [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'external_id' => $member->external_id,
+                    'chars' => $chars
+                ];
+            }
+            return $result;
         } catch (Exception $e) {
             throw $e;
         }

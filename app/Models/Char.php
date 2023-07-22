@@ -13,6 +13,14 @@ class Char extends Model
         'external_id',
         'name',
         'url',
+        'type'
     ];
+
+
+    public function members()
+    {
+        return $this->belongsToMany(Member::class)->withPivot('rel', 'tir');
+    }
+
 
 }

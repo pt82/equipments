@@ -14,4 +14,9 @@ class Member extends Model
         'name',
         'power',
     ];
+
+    public function chars()
+    {
+        return $this->belongsToMany(Char::class)->withPivot('rel', 'tir');
+    }
 }

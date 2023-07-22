@@ -18,8 +18,11 @@ class ApiSwgohHelp
      */
     private $client;
 
-    public function __construct() {
+    private $guildId;
+
+    public function __construct($guildId = 52313) {
         $this->client = new Client();
+        $this->guildId = $guildId;
     }
 
     public function login() {
@@ -58,9 +61,9 @@ class ApiSwgohHelp
 
     }
 
-    public function fetchGiInfo($data) {
+    public function fetchGiInfo() {
         try {
-            return $this->fetchAPI('guild/' . $data);
+            return $this->fetchAPI('guild/' . $this->guildId);
         } catch(Exception $e) {
             throw $e;
         }
@@ -69,6 +72,14 @@ class ApiSwgohHelp
     public function fetchChars() {
         try {
             return $this->fetchAPI('characters/');
+        } catch(Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function fetchShips() {
+        try {
+            return $this->fetchAPI('ships/');
         } catch(Exception $e) {
             throw $e;
         }
@@ -96,9 +107,31 @@ class ApiSwgohHelp
         }
     }
 
-    public function fetchGuild( $allycode ) {
+    public function fetchGuild( $allycode )
+    {
         try {
             return $this->fetchAPI( $this->guild, $allycode );
+        } catch(Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function fetchMembers()
+    {
+        try {
+            $gii = $this->getResponseBody($this->fetchGiInfo());
+
+            return $gii ? $gii['data']['members'] : null;
+
+        } catch(Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function fetchInfoMember($ally_code)
+    {
+        try {
+            return $this->fetchAPI('player/' . $ally_code);
         } catch(Exception $e) {
             throw $e;
         }

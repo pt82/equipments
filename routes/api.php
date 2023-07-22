@@ -30,9 +30,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('equipment-type', [TypeController::class, 'index']);
 });
 
-Route::get('/gi', [SwController::class, 'index']);
-Route::get('/list-chars', [SwController::class, 'listChars']);
-Route::post('/update-chars', [SwController::class, 'updateChars']);
-Route::post('/update-members', [SwController::class, 'updateMembers']);
-Route::get('/gi-members', [SwController::class, 'listMembers']);
+Route::post('/gi', [SwController::class, 'index']);
+Route::get('/list-chars', [SwController::class, 'listChars']);//список персов
+Route::post('/update-chars', [SwController::class, 'updateChars']);//обновить персов
+Route::post('/update-members', [SwController::class, 'updateMembers']); //обновить членов гильдии
+Route::post('/update-info-member/{member}', [SwController::class, 'updateInfoMember']); //
+
+Route::get('/gi-members', [SwController::class, 'listMembers']); //члены гильдии
+Route::post('/load-data', [SwController::class, 'loadData']); //загрузить все данные на всех членов
+Route::post('/search-data', [SwController::class, 'searchData']); //загрузить все данные на всех членов
 

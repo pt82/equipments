@@ -4,12 +4,16 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Char;
+use App\Models\Char_Member;
+use App\Models\Import;
+use App\Models\Member;
 use App\Services\Chars\CharsService;
 use App\Services\Client\ApiSwgohHelp;
 use App\Services\Member\MembersService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 
 class SwController extends Controller
@@ -24,13 +28,14 @@ class SwController extends Controller
     {
 
         $client = new ApiSwgohHelp();
+        $service = new MembersService();
+        return $service->getMembersFromSW();
 //        $response  = $client->fetchGiInfo('52313');
-        $response  = $client->fetchChars();
+        $response = $client->fetchChars();
         $responseBody = $client->getResponseBody($response);
-        foreach ($responseBody as $char)
-        {
+        foreach ($responseBody as $char) {
             $model = Char::query()->where('external_id', $char->base_id)->first();
-            if(!$model) {
+            if (!$model) {
                 $model = new Char();
                 $model->name = $char->name;
                 $model->external_id = $char->base_id;
@@ -54,15 +59,68 @@ class SwController extends Controller
 
     public function listMembers()
     {
-        $servise = new MembersService();
-        return $this->sendResponse($servise->loadModels(), "MembersService");
+        $service = new MembersService();
+        return $this->sendResponse($service->loadModels(), "MembersService");
+    }
+
+    public function loadData()
+    {
+        $result = [];
+        try {
+            if (Import::query()->where('gi_id', 52313)->where('status', '!=', Import::STATUS_FINISH)->latest())
+            {
+                return false;
+            }
+            $import = new Import();
+            $import->gi_id = 52313;
+            $import->status = Import::STATUS_START;
+            $import->save();
+            DB::transaction(function () use ($import) {
+                $import->saveStatus(Import::STATUS_PROCESS);
+                $service = new MembersService();
+                $members = $service->loadModels();
+                foreach ($members as $member) {
+                    $units = $this->getResponse($service->getInfoMember($member->external_id))['units'];
+                    foreach ($units as $unit) {
+                        $char = Char::query()->where('external_id', $unit['data']['base_id'])->first();
+                        $member->chars()->attach($char, [
+                            'rel' => (($unit['data']['relic_tier'] > 2) ? ($unit['data']['relic_tier'] - 2) : null),
+                            'tir' => $unit['data']['gear_level'],
+                            'import_id' => $import->id,
+                            'gi_id' => 52313,
+                        ]);
+                    }
+                }
+            });
+        } catch (Exception $exception) {
+            $import->saveStatus(Import::STATUS_ERROR);
+            return 'Извините, внешняя служба не работает';
+        }
+        $import->saveStatus(Import::STATUS_FINISH);
+        return $this->sendResponse([], "MembersService");
+
+    }
+
+
+    public function searchData(Request $request)
+    {
+
+      $data = [
+           'ids' =>  $request->ids ?? [],
+            'rel' => $request->rel ?? ''
+        ];
+        $service = new CharsService();
+        return $this->sendResponse($service->searchChars($data), "Search");
+
     }
 
     public function updateChars()
     {
         $service = new CharsService();
 
-        $service->updateListCharsFromSW($service->getCharsFromSW());
+        $service->updateListCharsFromSW($service->getCharsFromSW(), 'char');
+
+        $service->updateListCharsFromSW($service->getShipsFromSW(), 'ship');
 
     }
 
@@ -79,9 +137,30 @@ class SwController extends Controller
 
     public function updateMembers()
     {
-        $service = new CharsService();
+        $service = new MembersService();
 
-        $service->updateListCharsFromSW($service->getCharsFromSW());
+        $service->updateListMembersFromSW($service->getMembersFromSW());
 
     }
+
+    public function updateInfoMember(Member $member)
+    {
+
+        $service = new MembersService();
+        return $this->getResponse($service->getInfoMember(324257441));
+    }
+
+    /**
+     * @param $response
+     * @return mixed
+     * @throws \Exception
+     */
+    private function getResponse($response)
+    {
+        $client = new ApiSwgohHelp();
+
+        return $client->getResponseBody($response);
+    }
+
+
 }
