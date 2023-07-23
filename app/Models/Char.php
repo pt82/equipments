@@ -13,7 +13,8 @@ class Char extends Model
         'external_id',
         'name',
         'url',
-        'type'
+        'type',
+        'name_ru'
     ];
 
 

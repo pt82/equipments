@@ -55,6 +55,7 @@ class CharsService
                 $model->external_id = $char['base_id'];
                 $model->url = $char['url'];
                 $model->type = $type;
+                $model->name_ru = $char['name_ru'] ?? '';
                 $model->save();
             }
         } catch (Exception $e) {
