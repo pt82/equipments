@@ -52,6 +52,7 @@ class CharsService
                     $model = new Char();
                 }
                 $model->name = $char['name'];
+                $model->image = $char['image'];
                 $model->external_id = $char['base_id'];
                 $model->url = $char['url'];
                 $model->type = $type;
@@ -87,7 +88,7 @@ class CharsService
             $result = [];
             $rel = $data['rel'] ?? "";
             $ids = $data['ids'];
-             $membersIds =  Member::query()
+            $membersIds =  Member::query()
                  ->when(!empty($rel), function ($query) use ($data)  {
                      return $query->whereHas('chars', function ($query) use ($data) {
                          $query->whereIn('char_id', $data['ids']);
@@ -115,6 +116,48 @@ class CharsService
                     'name' => $member->name,
                     'external_id' => $member->external_id,
                     'chars' => $chars
+                ];
+            }
+            return $result;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function searchMembers($data)
+    {
+        try {
+            $result = [];
+            $rel = $data['rel'] ?? "";
+            $ids = $data['ids'];
+            $charsIds =  Char::query()
+                ->when(!empty($rel), function ($query) use ($data)  {
+                    return $query->whereHas('members', function ($query) use ($data) {
+                        $query->whereIn('member_id', $data['ids']);
+                        $query->where('rel', '>', $data['rel']);
+                    });
+                })
+                ->when(empty($rel), function ($query)  use ($ids) {
+                    return $query->whereHas('members', function ($query) use ($ids) {
+                        $query->whereIn('member_id', $ids);
+                    });
+                })
+                ->get();
+            foreach ($charsIds as $char)
+            {
+                if (!empty($rel))
+                {
+                    $members = $char->members()->whereIn('member_id', $data['ids'])->where('rel', '>' , $data['rel'])->get();
+                }
+                if (empty($rel))
+                {
+                    $members = $char->members()->whereIn('char_id', $data['ids'])->get();
+                }
+                $result[] = [
+                    'id' => $char->id,
+                    'name' => $char->name,
+                    'external_id' => $char->external_id,
+                    'members' => $members
                 ];
             }
             return $result;

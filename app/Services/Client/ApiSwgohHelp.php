@@ -18,6 +18,9 @@ class ApiSwgohHelp
      */
     private $client;
 
+    /**
+     * @var int
+     */
     private $guildId;
 
     public function __construct($guildId = 52313) {

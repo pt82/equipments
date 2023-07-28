@@ -67,8 +67,7 @@ class SwController extends Controller
     {
         $result = [];
         try {
-            if (Import::query()->where('gi_id', 52313)->where('status', '!=', Import::STATUS_FINISH)->latest())
-            {
+            if (Import::query()->where('gi_id', 52313)->where('status', '!=', Import::STATUS_FINISH)->latest()) {
                 return false;
             }
             $import = new Import();
@@ -105,19 +104,31 @@ class SwController extends Controller
     public function searchData(Request $request)
     {
 
-      $data = [
-           'ids' =>  $request->ids ?? [],
-            'rel' => $request->rel ?? ''
+        $data = [
+            'ids' => $request->ids ?? [],
+            'rel' => $request->rel ?? '',
         ];
         $service = new CharsService();
         return $this->sendResponse($service->searchChars($data), "Search");
 
     }
 
+    public function searchDataByChar(Request $request)
+    {
+
+        $data = [
+            'ids' => $request->ids ?? [],
+            'rel' => $request->rel ?? '',
+        ];
+        $service = new CharsService();
+        return $this->sendResponse($service->searchMembers($data), "Search");
+
+    }
+
     public function updateChars()
     {
         $service = new CharsService();
-
+//return $service->getCharsFromSW();
         $service->updateListCharsFromSW($service->getCharsFromSW(), 'char');
 
         $service->updateListCharsFromSW($service->getShipsFromSW(), 'ship');

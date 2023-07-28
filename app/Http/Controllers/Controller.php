@@ -56,4 +56,29 @@ class Controller extends BaseController
         return response()->json($response, $code);
 
     }
+
+    /**
+     * @param boolean $result
+     * @param $message
+     * @return JsonResponse
+     */
+    public function sendBollean($result, $message)
+    {
+        if($result) {
+            $status = 200;
+            $response = [
+                'success' => true,
+                'message' => $message
+            ];
+        } else
+        {
+            $status = 400;
+            $response = [
+            'success' => false,
+            'message' => $message
+        ];
+        }
+        return response()->json($response, $status);
+
+    }
 }

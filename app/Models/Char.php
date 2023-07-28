@@ -14,6 +14,7 @@ class Char extends Model
         'name',
         'url',
         'type',
+        'image',
         'name_ru'
     ];
 
