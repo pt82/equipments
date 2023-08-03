@@ -67,9 +67,9 @@ class SwController extends Controller
     {
         $result = [];
         try {
-            if (Import::query()->where('gi_id', 52313)->where('status', '!=', Import::STATUS_FINISH)->latest()) {
-                return false;
-            }
+//            if (Import::query()->where('gi_id', 52313)->where('status', '!=', Import::STATUS_FINISH)->latest()) {
+//                return false;
+//            }
             $import = new Import();
             $import->gi_id = 52313;
             $import->status = Import::STATUS_START;
@@ -79,18 +79,23 @@ class SwController extends Controller
                 $service = new MembersService();
                 $members = $service->loadModels();
                 foreach ($members as $member) {
-                    $units = $this->getResponse($service->getInfoMember($member->external_id))['units'];
+                   $units = $this->getResponse($service->getInfoMember($member->external_id))['units'];
                     foreach ($units as $unit) {
+//                        return $unit['data']['ability_data'];
                         $char = Char::query()->where('external_id', $unit['data']['base_id'])->first();
                         $member->chars()->attach($char, [
                             'rel' => (($unit['data']['relic_tier'] > 2) ? ($unit['data']['relic_tier'] - 2) : null),
                             'tir' => $unit['data']['gear_level'],
+                            'rarity' => $unit['data']['rarity'],
+                            'ability_data' => json_encode($unit['data']['ability_data']) ?? [],
                             'import_id' => $import->id,
                             'gi_id' => 52313,
                         ]);
                     }
                 }
             });
+            $import->status = Import::STATUS_FINISH;
+            $import->save();
         } catch (Exception $exception) {
             $import->saveStatus(Import::STATUS_ERROR);
             return 'Извините, внешняя служба не работает';

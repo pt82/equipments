@@ -56,7 +56,7 @@ class CharsService
                 $model->external_id = $char['base_id'];
                 $model->url = $char['url'];
                 $model->type = $type;
-                $model->name_ru = $char['name_ru'] ?? '';
+
                 $model->save();
             }
         } catch (Exception $e) {
@@ -105,7 +105,7 @@ class CharsService
             {
                 if (!empty($rel))
                 {
-                    $chars = $member->chars()->whereIn('char_id', $data['ids'])->where('rel', '>' , $data['rel'])->get();
+                    $chars = $member->chars()->whereIn('char_id', $data['ids'])->where('rel', '>=' , $data['rel'])->get();
                 }
                 if (empty($rel))
                 {
@@ -115,7 +115,7 @@ class CharsService
                     'id' => $member->id,
                     'name' => $member->name,
                     'external_id' => $member->external_id,
-                    'chars' => $chars
+                    'info' => $chars
                 ];
             }
             return $result;
@@ -130,24 +130,12 @@ class CharsService
             $result = [];
             $rel = $data['rel'] ?? "";
             $ids = $data['ids'];
-            $charsIds =  Char::query()
-                ->when(!empty($rel), function ($query) use ($data)  {
-                    return $query->whereHas('members', function ($query) use ($data) {
-                        $query->whereIn('member_id', $data['ids']);
-                        $query->where('rel', '>', $data['rel']);
-                    });
-                })
-                ->when(empty($rel), function ($query)  use ($ids) {
-                    return $query->whereHas('members', function ($query) use ($ids) {
-                        $query->whereIn('member_id', $ids);
-                    });
-                })
-                ->get();
-            foreach ($charsIds as $char)
+            $chars = Char::query()->whereIn('id', $ids)->get();
+            foreach ($chars as $char)
             {
                 if (!empty($rel))
                 {
-                    $members = $char->members()->whereIn('member_id', $data['ids'])->where('rel', '>' , $data['rel'])->get();
+                    $members = $char->members()->whereIn('char_id', $data['ids'])->where('rel', '>=' , $data['rel'])->get();
                 }
                 if (empty($rel))
                 {
@@ -156,8 +144,9 @@ class CharsService
                 $result[] = [
                     'id' => $char->id,
                     'name' => $char->name,
+                    'name_ru' => $char->name_ru,
                     'external_id' => $char->external_id,
-                    'members' => $members
+                    'info' => $members
                 ];
             }
             return $result;

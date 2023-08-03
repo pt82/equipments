@@ -13,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('chars', function (Blueprint $table) {
-            $table->string('image')->nullable();
+        Schema::table('char_member', function (Blueprint $table) {
+            $table->smallInteger('rarity')->nullable();
+            $table->jsonb('ability_data')->nullable();
         });
     }
 
@@ -25,7 +26,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('chars', function (Blueprint $table) {
+        Schema::table('char_member', function (Blueprint $table) {
             //
         });
     }

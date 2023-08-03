@@ -18,5 +18,11 @@ class Char_Member extends Model
         'char_id',
         'rel',
         'tir',
+        'ability_data',
+        'rarity'
+    ];
+
+    protected $casts = [
+        'ability_data' => 'array'
     ];
 }
