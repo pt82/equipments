@@ -87,7 +87,7 @@ class SwController extends Controller
                             'rel' => (($unit['data']['relic_tier'] > 2) ? ($unit['data']['relic_tier'] - 2) : null),
                             'tir' => $unit['data']['gear_level'],
                             'rarity' => $unit['data']['rarity'],
-                            'ability_data' => json_encode($unit['data']['ability_data']) ?? [],
+                            'ability_data' => json_encode($unit['data']['omicron_abilities']) ?? [],
                             'import_id' => $import->id,
                             'gi_id' => 52313,
                         ]);
