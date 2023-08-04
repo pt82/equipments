@@ -92,7 +92,7 @@ class CharsService
                  ->when(!empty($rel), function ($query) use ($data)  {
                      return $query->whereHas('chars', function ($query) use ($data) {
                          $query->whereIn('char_id', $data['ids']);
-                         $query->where('rel', '>', $data['rel']);
+                         $query->where('rel', '>=', $data['rel']);
                      });
                  })
                  ->when(empty($rel), function ($query)  use ($ids) {
