@@ -89,17 +89,17 @@ class CharsService
             $rel = $data['rel'] ?? "";
             $ids = $data['ids'];
             $membersIds =  Member::query()
-                 ->when(!empty($rel), function ($query) use ($data)  {
-                     return $query->whereHas('chars', function ($query) use ($data) {
-                         $query->whereIn('char_id', $data['ids']);
-                         $query->where('rel', '>=', $data['rel']);
-                     });
-                 })
-                 ->when(empty($rel), function ($query)  use ($ids) {
-                     return $query->whereHas('chars', function ($query) use ($ids) {
-                         $query->whereIn('char_id', $ids);
-                     });
-                 })
+                ->when(!empty($rel), function ($query) use ($data)  {
+                    return $query->whereHas('chars', function ($query) use ($data) {
+                        $query->whereIn('char_id', $data['ids']);
+                        $query->where('rel', '>=', $data['rel']);
+                    });
+                })
+                ->when(empty($rel), function ($query)  use ($ids) {
+                    return $query->whereHas('chars', function ($query) use ($ids) {
+                        $query->whereIn('char_id', $ids);
+                    });
+                })
                 ->get();
             foreach ($membersIds as $member)
             {
@@ -114,6 +114,7 @@ class CharsService
                 $result[] = [
                     'id' => $member->id,
                     'name' => $member->name,
+                    'name_ru' => $member->name,
                     'external_id' => $member->external_id,
                     'info' => $chars
                 ];
