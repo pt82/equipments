@@ -15,9 +15,14 @@ class Char extends Model
         'url',
         'type',
         'image',
-        'name_ru'
+        'name_ru',
+        'categories',
     ];
 
+
+    protected $casts = [
+        'categories' => 'array'
+    ];
 
     public function members()
     {

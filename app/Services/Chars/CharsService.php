@@ -56,6 +56,7 @@ class CharsService
                 $model->external_id = $char['base_id'];
                 $model->url = $char['url'];
                 $model->type = $type;
+                $model->categories = $char['categories'];
 
                 $model->save();
             }
