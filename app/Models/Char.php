@@ -26,7 +26,7 @@ class Char extends Model
 
     public function members()
     {
-        return $this->belongsToMany(Member::class)->withPivot('rel', 'tir');
+        return $this->belongsToMany(Member::class)->withPivot('rel', 'tir', 'rarity', 'ability_data');
     }
 
 

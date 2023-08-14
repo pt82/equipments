@@ -31,6 +31,6 @@ class Member extends Model
 
     public function chars()
     {
-        return $this->belongsToMany(Char::class)->withPivot('rel', 'tir');
+        return $this->belongsToMany(Char::class)->withPivot('rel', 'tir', 'rarity', 'ability_data');
     }
 }
