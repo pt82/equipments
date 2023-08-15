@@ -22,7 +22,7 @@ class GroupService
      */
     public function  getAll()
     {
-        return Group::query()->where('gi_id', $this->guildId)->get();
+        return Group::query()->where('gi_id', $this->guildId)->with('chars')->get();
     }
 
     /**
@@ -33,6 +33,21 @@ class GroupService
     {
         $model = new Group();
         $model->name = $request->name;
-        return $model->save();
+        $model->gi_id = $this->guildId;
+        if ($model->save()) {
+            $model->chars()->sync($request->ids);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param Group $group
+     * @return bool
+     */
+    public function delete(Group $group)
+    {
+        $group->chars()->detach();
+        return $group->delete();
     }
 }

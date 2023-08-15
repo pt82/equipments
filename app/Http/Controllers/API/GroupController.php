@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Group;
 use App\Services\Groups\GroupService;
 use Illuminate\Http\Request;
 
@@ -29,10 +30,8 @@ class GroupController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -78,10 +77,11 @@ class GroupController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Group $group)
     {
-        //
+        $service = new GroupService();
+        return $this->sendBollean($service->delete($group), 'Delete group');
     }
 }

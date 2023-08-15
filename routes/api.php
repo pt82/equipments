@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\SwController;
 use App\Http\Controllers\API\TypeController;
 use App\Http\Controllers\Auth\AuthController;
@@ -40,4 +41,8 @@ Route::get('/gi-members', [SwController::class, 'listMembers']); //члены г
 Route::post('/load-data', [SwController::class, 'loadData']); //загрузить все данные на всех членов
 Route::post('/search-data', [SwController::class, 'searchData']);
 Route::post('/search-data-by-char', [SwController::class, 'searchDataByChar']);
+
+Route::get('/group', [GroupController::class, 'index']);
+Route::post('/group', [GroupController::class, 'store']);
+Route::delete('/group/{group}', [GroupController::class, 'destroy']);
 

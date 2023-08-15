@@ -62,7 +62,7 @@ class Controller extends BaseController
      * @param $message
      * @return JsonResponse
      */
-    public function sendBollean($result, $message)
+    public function sendBollean($result, $message = '')
     {
         if($result) {
             $status = 200;
