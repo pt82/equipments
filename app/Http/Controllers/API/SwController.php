@@ -9,7 +9,9 @@ use App\Models\Import;
 use App\Models\Member;
 use App\Services\Chars\CharsService;
 use App\Services\Client\ApiSwgohHelp;
+use App\Services\Data\DataService;
 use App\Services\Member\MembersService;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,6 +72,7 @@ class SwController extends Controller
 //            if (Import::query()->where('gi_id', 52313)->where('status', '!=', Import::STATUS_FINISH)->latest()) {
 //                return false;
 //            }
+            (new DataService())->deleteAll();
             $import = new Import();
             $import->gi_id = 52313;
             $import->status = Import::STATUS_START;
