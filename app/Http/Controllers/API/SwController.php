@@ -65,6 +65,21 @@ class SwController extends Controller
         return $this->sendResponse($service->loadModels(), "MembersService");
     }
 
+    /**
+     * @return JsonResponse
+     */
+    public function statusLastUpdate()
+    {
+        $import = Import::query()->where('gi_id', 52313)->latest();
+        if ($import)
+        {
+            return $this->sendResponse($import, "StatusUpdate");
+        }
+        else {
+            return $this->sendError('Ошибка обратитесь к администратору');
+        }
+    }
+
     public function loadData()
     {
         $result = [];

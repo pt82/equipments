@@ -39,6 +39,7 @@ Route::post('/update-info-member/{member}', [SwController::class, 'updateInfoMem
 
 Route::get('/gi-members', [SwController::class, 'listMembers']); //члены гильдии
 Route::post('/load-data', [SwController::class, 'loadData']); //загрузить все данные на всех членов
+Route::get('/status-last-update', [SwController::class, 'statusLastUpdate']); //получить последний статус загрузки
 Route::post('/search-data', [SwController::class, 'searchData']);
 Route::post('/search-data-by-char', [SwController::class, 'searchDataByChar']);
 
