@@ -70,7 +70,7 @@ class SwController extends Controller
      */
     public function statusLastUpdate()
     {
-        $import = Import::query()->where('gi_id', 52313)->latest();
+        $import = Import::query()->where('gi_id', 52313)->latest('created_at')->first();
         if ($import)
         {
             return $this->sendResponse($import, "StatusUpdate");
