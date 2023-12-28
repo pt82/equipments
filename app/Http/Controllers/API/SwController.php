@@ -119,7 +119,7 @@ class SwController extends Controller
             return 'Извините, внешняя служба не работает';
         }
         $import->saveStatus(Import::STATUS_FINISH);
-        return $this->sendResponse([], "MembersService");
+        return $this->sendResponse($import, "MembersService");
 
     }
 
