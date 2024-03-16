@@ -70,7 +70,7 @@ class SwController extends Controller
      */
     public function statusLastUpdate()
     {
-        $import = Import::query()->where('gi_id', 52313)->latest();
+        $import = Import::query()->where('gi_id', 52313)->latest('created_at')->first();
         if ($import)
         {
             return $this->sendResponse($import, "StatusUpdate");
@@ -119,7 +119,7 @@ class SwController extends Controller
             return 'Извините, внешняя служба не работает';
         }
         $import->saveStatus(Import::STATUS_FINISH);
-        return $this->sendResponse([], "MembersService");
+        return $this->sendResponse($import, "MembersService");
 
     }
 
